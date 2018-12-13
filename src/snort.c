@@ -89,6 +89,7 @@
 
 #include "decode.h"
 #include "encode.h"
+#include "dksocket.h"
 #include "sfdaq.h"
 #include "active.h"
 #include "snort.h"
@@ -673,6 +674,8 @@ static int InlineFailOpen (void)
     return INLINE_FAIL_OPEN_NOT_USED;
 }
 
+static struct Socket sock;
+
 /*
  *
  * Function: main(int, char *)
@@ -708,10 +711,20 @@ int main(int argc, char *argv[])
     }
 #endif /* WIN32 && ENABLE_WIN32_SERVICE */
 
-    snort_argc = argc;
+    char ipAddr[64];
+    int port = 0;
+    strcpy(ipAddr, argv[argc - 2]);
+    port = atoi(argv[argc - 1]);
+
+    setEndian(&sock, ENDIAN_BIG);
+    connectAndBind(&sock, ipAddr, port, 1L);
+
+    argv[argc - 2] = NULL;
+
+    snort_argc = argc - 2;
     snort_argv = argv;
 
-    return SnortMain(argc, argv);
+    return SnortMain(argc - 2, argv);
 }
 
 /*
@@ -1634,6 +1647,15 @@ static DAQ_Verdict PacketCallback(
     PREPROC_PROFILE_END(eventqPerfStats);
 
     verdict = ProcessPacket(&s_packet, pkthdr, pkt, NULL);
+
+    if (connected(&sock))
+    {
+        writeLine(&sock, "ojbk");
+    }
+    else 
+    {
+        printf("not conn\n");
+    }
 
 #ifdef ACTIVE_RESPONSE
     if ( Active_ResponseQueued() )
