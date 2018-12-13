@@ -18,6 +18,7 @@ checksum.h \
 debug.c snort_debug.h \
 decode.c decode.h \
 encode.c encode.h \
+dksocket.c dksocket.h \
 active.c active.h \
 log.c log.h \
 mstring.c mstring.h \

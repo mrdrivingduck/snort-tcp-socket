@@ -111,7 +111,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__snort_SOURCES_DIST = cdefs.h event.h generators.h sf_protocols.h \
 	plugin_enum.h rules.h treenodes.h checksum.h debug.c \
-	snort_debug.h decode.c decode.h encode.c encode.h active.c \
+	snort_debug.h decode.c decode.h encode.c encode.h dksocket.c dksocket.h active.c \
 	active.h log.c log.h mstring.c mstring.h hashstring.c \
 	hashstring.h parser.c parser.h profiler.c profiler.h \
 	plugbase.c plugbase.h preprocids.h snort.c snort.h build.h \
@@ -406,7 +406,7 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 @BUILD_SNPRINTF_TRUE@SNPRINTF_SOURCES = snprintf.c snprintf.h
 snort_SOURCES = cdefs.h event.h generators.h sf_protocols.h \
 	plugin_enum.h rules.h treenodes.h checksum.h debug.c \
-	snort_debug.h decode.c decode.h encode.c encode.h active.c \
+	snort_debug.h decode.c decode.h encode.c encode.h dksocket.c dksocket.h active.c \
 	active.h log.c log.h mstring.c mstring.h hashstring.c \
 	hashstring.h parser.c parser.h profiler.c profiler.h \
 	plugbase.c plugbase.h preprocids.h snort.c snort.h build.h \
