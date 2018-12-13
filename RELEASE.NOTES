@@ -1,0 +1,17 @@
+2018-09-18 - Snort 2.9.12.0
+  
+[*] New Additions
+
+ * Parsing HTTP CONNECT to extract the tunnel IP and port information.
+
+ * Alerting and dechunking for chunked encoding in HTTP1.0 request and response.
+
+[*] Improvements
+
+ * Fixed an issue where in if we have a junk line before HTTP response header, the header was wrongly parsed.
+ 
+ * Fixed GZIP evasions wherein a HTTP response with content-encoding:gzip contains a body which has some gzip related anomaly.
+
+ * Fixed an issue in a scenario where BitTorrent pattern is seen only on the 3rd packet of the session because of which we miss our client detection.
+ 
+ * SMB improvements for file detection and processing.
