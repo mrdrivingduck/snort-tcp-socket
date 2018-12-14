@@ -711,13 +711,11 @@ int main(int argc, char *argv[])
     }
 #endif /* WIN32 && ENABLE_WIN32_SERVICE */
 
-    char ipAddr[64];
-    int port = 0;
-    strcpy(ipAddr, argv[argc - 2]);
-    port = atoi(argv[argc - 1]);
+    strcpy(sock._ipAddr, argv[argc - 2]);
+    sock._port = atoi(argv[argc - 1]);
 
     setEndian(&sock, ENDIAN_BIG);
-    connectAndBind(&sock, ipAddr, port, 1L);
+    connectAndBind(&sock, sock._ipAddr, sock._port, 1L);
 
     argv[argc - 2] = NULL;
 
@@ -1571,6 +1569,39 @@ static Packet s_packet;
 static DAQ_PktHdr_t s_pkth;
 static uint8_t s_data[65536];
 
+/************************************
+ * 
+ * @author Mr Dk.
+ * @version 2018.12.14
+ * 
+ * @param Socket *sock
+ * @param Packet *p
+ * 
+ * To send one packet in ONE LINE
+ * 
+ * **********************************/
+static void TransmitPacket(Socket *sock, Packet *p)
+{
+    char msg[1024] = "";
+    char buf[64] = "";
+
+    // Ethernet packet
+    if (p != NULL && p->eh != NULL)
+    {
+        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X %02X:%02X:%02X:%02X:%02X:%02X ", 
+            p->eh->ether_src[0], p->eh->ether_src[1], p->eh->ether_src[2],
+            p->eh->ether_src[3], p->eh->ether_src[4], p->eh->ether_src[5],
+            p->eh->ether_dst[0], p->eh->ether_dst[1], p->eh->ether_dst[2],
+            p->eh->ether_dst[3], p->eh->ether_dst[4], p->eh->ether_dst[5]
+        );
+        strcat(msg, buf);
+
+        // IP ?
+
+        writeLine(sock, msg);
+    }
+}
+
 static DAQ_Verdict PacketCallback(
     void* user, const DAQ_PktHdr_t* pkthdr, const uint8_t* pkt)
 {
@@ -1650,11 +1681,11 @@ static DAQ_Verdict PacketCallback(
 
     if (connected(&sock))
     {
-        writeLine(&sock, "ojbk");
+        TransmitPacket(&sock, &s_packet);
     }
     else 
     {
-        printf("not conn\n");
+        // ?
     }
 
 #ifdef ACTIVE_RESPONSE
