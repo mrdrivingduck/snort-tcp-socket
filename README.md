@@ -21,6 +21,7 @@ This version is based on:
 
 * _Snort&reg; Linux 2.9.12_ - [link](https://www.snort.org/downloads/snort/snort-2.9.12.tar.gz)
 * _C Socket wrapper_ implemented by myself - [link](https://github.com/mrdrivingduck/linux-c-socket)
+* _C JSON generator_ implemented by myself - [link](https://github.com/mrdrivingduck/c-json-generator)
 
 ### Installation
 
