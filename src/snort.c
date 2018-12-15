@@ -1585,26 +1585,46 @@ static void TransmitPacket(Socket *sock, Packet *p)
 {
     char json_res[1024] = "";
     char buf[64] = "";
-
-    // Ethernet packet
-    if (p != NULL && p->eh != NULL)
+    
+    if (p != NULL)
     {
-        struct dkJSON json;
-        dkjson_init(&json);
+		struct dkJSON json = {NULL, 0, 0};
+		dkjson_init(&json);
 
-        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", 
-            p->eh->ether_src[0], p->eh->ether_src[1], p->eh->ether_src[2],
-            p->eh->ether_src[3], p->eh->ether_src[4], p->eh->ether_src[5]
-        );
-        dkjson_put_string(&json, "src_mac", buf);
+		// Ethernet packet
+		if (p->eh != NULL)
+        {
+			sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", 
+				p->eh->ether_src[0], p->eh->ether_src[1], p->eh->ether_src[2],
+				p->eh->ether_src[3], p->eh->ether_src[4], p->eh->ether_src[5]
+			);
+			dkjson_put_string(&json, "src_mac", buf);
 
-        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
-            p->eh->ether_dst[0], p->eh->ether_dst[1], p->eh->ether_dst[2],
-            p->eh->ether_dst[3], p->eh->ether_dst[4], p->eh->ether_dst[5]
-        );
-        dkjson_put_string(&json, "dst_mac", buf);
+			sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
+				p->eh->ether_dst[0], p->eh->ether_dst[1], p->eh->ether_dst[2],
+				p->eh->ether_dst[3], p->eh->ether_dst[4], p->eh->ether_dst[5]
+			);
+			dkjson_put_string(&json, "dst_mac", buf);
+		}
 
-        // IP ?
+        // IP packet
+		if (p->iph != NULL)
+        {
+			unsigned int src_ip = p->iph->ip_src.s_addr;
+			unsigned int dst_ip = p->iph->ip_dst.s_addr;
+			sprintf(buf, "%u.%u.%u.%u", src_ip&0xFF, (src_ip>>8)&0xFF, (src_ip>>16)&0xFF, (src_ip>>24)&0xFF);
+			dkjson_put_string(&json, "src_ip", buf);
+			
+			sprintf(buf, "%u.%u.%u.%u", dst_ip&0xFF, (dst_ip>>8)&0xFF, (dst_ip>>16)&0xFF, (dst_ip>>24)&0xFF);
+			dkjson_put_string(&json, "dst_ip", buf);
+		}
+
+        // port
+		if (p->sp != 0 || p->dp != 0)
+        {
+			dkjson_put_unsignedshort(&json, "src_port", p->sp);
+			dkjson_put_unsignedshort(&json, "dst_port", p->dp);
+		}
 
         dkjson_generate(&json, json_res);
         dkjson_destroy(&json);

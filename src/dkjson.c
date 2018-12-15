@@ -231,3 +231,44 @@ Status dkjson_put_double(dkJSON *json, char key[], double value)
 
     return STATUS_OK;
 }
+
+Status dkjson_put_unsignedint(dkJSON *json, char key[], unsigned int value)
+{
+    if (json == NULL)
+    {
+        return STATUS_ERR;
+    }
+
+    char value_str[16];
+    sprintf(value_str, "%u", value);
+
+    // ...,"key":value_str -- strlen(former) + 6 bytes + strlen(key) + strlen(value_str)
+    while ((long long unsigned int) (json->_dkjson_capacity - 1) <
+            strlen(json->_dkjson_str) + 4 + strlen(key) + strlen(value_str))
+    {
+        char *reallocation = (char *) realloc(json->_dkjson_str, json->_dkjson_capacity * 2);
+        if (reallocation == NULL)
+        {
+            return STATUS_ERR;
+        }
+        json->_dkjson_str = reallocation;
+        json->_dkjson_capacity <<= 1;
+    }
+
+    if (json->_dkjson_count > 0)
+    {
+        strcat(json->_dkjson_str, ",");
+    }
+    strcat(json->_dkjson_str, "\"");
+    strcat(json->_dkjson_str, key);
+    strcat(json->_dkjson_str, "\":");
+    strcat(json->_dkjson_str, value_str);
+    json->_dkjson_count++;
+
+    return STATUS_OK;    
+}
+
+Status dkjson_put_unsignedshort(dkJSON *json, char key[], unsigned short value)
+{
+    return dkjson_put_unsignedint(json, key, (unsigned int) value);
+}

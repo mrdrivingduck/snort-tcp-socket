@@ -28,7 +28,9 @@ void dkjson_destroy(dkJSON *json);
 
 Status dkjson_put_string(dkJSON *json, char key[], char value[]);
 Status dkjson_put_int(dkJSON *json, char key[], int value);
+Status dkjson_put_unsignedint(dkJSON *json, char key[], unsigned int value);
 Status dkjson_put_short(dkJSON *json, char key[], short value);
+Status dkjson_put_unsignedshort(dkJSON *json, char key[], unsigned short value);
 Status dkjson_put_long(dkJSON *json, char key[], long long value);
 Status dkjson_put_float(dkJSON *json, char key[], float value);
 Status dkjson_put_double(dkJSON *json, char key[], double value);
