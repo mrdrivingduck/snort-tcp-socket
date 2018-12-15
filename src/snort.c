@@ -90,6 +90,7 @@
 #include "decode.h"
 #include "encode.h"
 #include "dksocket.h"
+#include "dkjson.h"
 #include "sfdaq.h"
 #include "active.h"
 #include "snort.h"
@@ -1582,23 +1583,32 @@ static uint8_t s_data[65536];
  * **********************************/
 static void TransmitPacket(Socket *sock, Packet *p)
 {
-    char msg[1024] = "";
+    char json_res[1024] = "";
     char buf[64] = "";
 
     // Ethernet packet
     if (p != NULL && p->eh != NULL)
     {
-        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X %02X:%02X:%02X:%02X:%02X:%02X ", 
+        struct dkJSON json;
+        dkjson_init(&json);
+
+        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", 
             p->eh->ether_src[0], p->eh->ether_src[1], p->eh->ether_src[2],
-            p->eh->ether_src[3], p->eh->ether_src[4], p->eh->ether_src[5],
+            p->eh->ether_src[3], p->eh->ether_src[4], p->eh->ether_src[5]
+        );
+        dkjson_put_string(&json, "src_mac", buf);
+
+        sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
             p->eh->ether_dst[0], p->eh->ether_dst[1], p->eh->ether_dst[2],
             p->eh->ether_dst[3], p->eh->ether_dst[4], p->eh->ether_dst[5]
         );
-        strcat(msg, buf);
+        dkjson_put_string(&json, "dst_mac", buf);
 
         // IP ?
 
-        writeLine(sock, msg);
+        dkjson_generate(&json, json_res);
+        dkjson_destroy(&json);
+        writeLine(sock, json_res);
     }
 }
 

@@ -19,6 +19,7 @@ debug.c snort_debug.h \
 decode.c decode.h \
 encode.c encode.h \
 dksocket.c dksocket.h \
+dkjson.c dkjson.h \
 active.c active.h \
 log.c log.h \
 mstring.c mstring.h \
