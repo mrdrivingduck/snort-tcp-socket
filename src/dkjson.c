@@ -2,7 +2,7 @@
 /*******************************
  * 
  * @author Mr Dk.
- * @version 2018.12.15, Nanjing
+ * @version 2018.12.16, Nanjing
  * 
  * *****************************/
 
@@ -132,7 +132,7 @@ Status dkjson_put_long(dkJSON *json, char key[], long long value)
     }
 
     char value_str[64];
-    sprintf(value_str, "%I64d", value);
+    sprintf(value_str, "%lld", value);
 
     // ...,"key":value_str -- strlen(former) + 6 bytes + strlen(key) + strlen(value_str)
     while ((long long unsigned int) (json->_dkjson_capacity - 1) <
