@@ -1713,10 +1713,6 @@ static DAQ_Verdict PacketCallback(
     {
         TransmitPacket(&sock, &s_packet);
     }
-    else 
-    {
-        // ?
-    }
 
 #ifdef ACTIVE_RESPONSE
     if ( Active_ResponseQueued() )
